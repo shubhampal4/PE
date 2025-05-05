@@ -1,0 +1,14 @@
+groups:
+  - name: checkout-alerts
+    rules:
+      - alert: HighLatencyBurnRate
+        expr: |
+          (rate(http_request_duration_seconds_bucket{job="checkout",le="0.5"}[1m]) < 0.99)
+          and
+          (rate(http_request_duration_seconds_bucket{job="checkout",le="0.5"}[5m]) < 0.99)
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High latency on /checkout"
+          description: "The 99th percentile latency is breaching SLO for /checkout"
